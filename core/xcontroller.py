@@ -7,9 +7,11 @@ import time
 
 
 class XController:
+    INIT_WAIT_TIME = 30
     BUY_WAIT_TIME = 0.5
     SELL_WAIT_TIME = 1
 
+    INIT_TIMES = 1024
     BUY_TIMES = 3
     SELL_TIMES = 3
 
@@ -43,34 +45,36 @@ class XController:
             logging.info("[End]Transaction{} is ended.".format(i))
 
     def _init(self):
-        try:
-            symbol_info = self.robot.get_symbol_info(self.option.symbol)
-            if symbol_info is None:
-                logging.error("[Init]Invalid symbol: {}".format(self.option.symbol))
-                return False
+        for i in range(XController.INIT_TIMES):
+            try:
+                symbol_info = self.robot.get_symbol_info(self.option.symbol)
+                if symbol_info is None:
+                    logging.info("[Init]Symbol is not supported: {}".format(self.option.symbol))
+                    return False
 
-            self._data.symbol = symbol_info['symbol']
+                self._data.symbol = symbol_info['symbol']
 
-            symbol_info['filters'] = {item['filterType']: item for item in symbol_info['filters']}
-            self._data.min_qty = float(symbol_info['filters']['LOT_SIZE']['minQty'])
-            self._data.min_price = float(symbol_info['filters']['PRICE_FILTER']['minPrice'])
-            self._data.min_notional = float(symbol_info['filters']['MIN_NOTIONAL']['minNotional'])
-            self._data.step_size = float(symbol_info['filters']['LOT_SIZE']['stepSize'])
-            self._data.tick_size = float(symbol_info['filters']['PRICE_FILTER']['tickSize'])
+                symbol_info['filters'] = {item['filterType']: item for item in symbol_info['filters']}
+                self._data.min_qty = float(symbol_info['filters']['LOT_SIZE']['minQty'])
+                self._data.min_price = float(symbol_info['filters']['PRICE_FILTER']['minPrice'])
+                self._data.min_notional = float(symbol_info['filters']['MIN_NOTIONAL']['minNotional'])
+                self._data.step_size = float(symbol_info['filters']['LOT_SIZE']['stepSize'])
+                self._data.tick_size = float(symbol_info['filters']['PRICE_FILTER']['tickSize'])
 
-            quantity = self.option.quantity
-            quantity = self._data.min_qty if quantity < self._data.min_qty else quantity
-            quantity = float(self._data.step_size * math.floor(quantity / self._data.step_size))
-            self._data.quantity = quantity
+                quantity = self.option.quantity
+                quantity = self._data.min_qty if quantity < self._data.min_qty else quantity
+                quantity = float(self._data.step_size * math.floor(quantity / self._data.step_size))
+                self._data.quantity = quantity
 
-            self._data.fee = self.option.fee
-            self._data.profit = self.option.profit
-            self._data.price_adjust = self.option.price_adjust
+                self._data.fee = self.option.fee
+                self._data.profit = self.option.profit
+                self._data.price_adjust = self.option.price_adjust
 
-            return True
-        except Exception as e:
-            logging.error("[Init Exception]={}".format(e))
-            return False
+                return True
+            except Exception as e:
+                logging.error("[Init Exception {}]={}".format(i, e))
+                time.sleep(XController.INIT_WAIT_TIME)
+        return False
 
     def _buy(self):
         order = None
