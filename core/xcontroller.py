@@ -16,9 +16,9 @@ class XController:
     SELL_TIMES = 3
 
     def __init__(self, robot, option):
+        self._data = threading.local()
         self.robot = robot
         self.option = option
-        self._data = threading.local()
 
     def fire(self):
         for i in range(self.option.robot_count):
@@ -69,6 +69,7 @@ class XController:
                 self._data.fee = self.option.fee
                 self._data.profit = self.option.profit
                 self._data.price_adjust = self.option.price_adjust
+                self._data.strategy = self.option.strategy
 
                 return True
             except Exception as e:
@@ -78,7 +79,7 @@ class XController:
 
     def _buy(self):
         order = None
-        if self.robot.can_buy(self._data):
+        if self.robot.can_buy(self._data, self._data.strategy):
             buy_count = 0
             while buy_count < XController.BUY_TIMES:
                 order = self.robot.buy(self._data.symbol, self._data.quantity, self._data.buy_price)

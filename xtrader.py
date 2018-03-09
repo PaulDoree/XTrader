@@ -10,6 +10,7 @@ from utils.arg_checker import *
 
 if __name__ == '__main__':
     config_logger()
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--symbol', type=str, default='CNDBTC',
                         help='symbol')
@@ -25,6 +26,8 @@ if __name__ == '__main__':
                         help='transaction count must be greater than or equal to 1')
     parser.add_argument('-rc', '--robot_count', type=count_int, default=1,
                         help='robot count must be greater than or equal to 1')
+    parser.add_argument('--strategy', type=strategy, default='default_strategy.DefaultStrategy',
+                        help='transaction strategy')
 
     option = parser.parse_args()
     robot = XRobot(API_KEY, API_SECRET)
