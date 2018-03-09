@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('-rc', '--robot_count', type=count_int, default=1,
                         help='robot count must be greater than or equal to 1')
     parser.add_argument('--strategy', type=strategy, default='default_strategy.DefaultStrategy',
-                        help='transaction strategy')
+                        help='transaction strategy, and format is module_name.strategy_class_name')
 
     option = parser.parse_args()
     robot = XRobot(API_KEY, API_SECRET)
