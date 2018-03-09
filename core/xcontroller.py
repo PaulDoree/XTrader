@@ -1,38 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+import math
 import sys
 import threading
 import time
 
 
 class XController:
+    INIT_WAIT_TIME = 30
     BUY_WAIT_TIME = 0.5
     SELL_WAIT_TIME = 1
 
+    INIT_TIMES = sys.maxsize
     BUY_TIMES = 3
     SELL_TIMES = 3
 
     def __init__(self, robot, option):
+        self._data = threading.local()
         self.robot = robot
         self.option = option
-        self._params = threading.local()
 
     def fire(self):
-        # params validate
-        is_valid = self._validate()
-        if is_valid is False:
-            logging.error('[Validate]Validate args failed, XTrader will exit.')
-            return
-
         for i in range(self.option.robot_count):
             trader = threading.Thread(target=self.run, name="XRobot{}({})".format(i, self.option.symbol))
             trader.start()
 
     def run(self):
-        transaction_count = sys.maxsize if self.option.transaction_count <= 0 else self.option.transaction_count
-        for i in range(transaction_count):
+        for i in range(self.option.transaction_count):
             logging.info("[Start]Transaction{} is started.".format(i))
+            if self._init() is False:
+                logging.error('[Init]Init failed, XTrader will exit.')
+                return
 
             buy_order = None
             while buy_order is None:
@@ -46,47 +45,45 @@ class XController:
 
             logging.info("[End]Transaction{} is ended.".format(i))
 
-    def _validate(self):
-        # check fee
-        fee = self.option.fee
-        if fee < 0.2:
-            logging.error("[Check]Invalid fee: {}.".format(self.option.fee))
-            return False
+    def _init(self):
+        for i in range(XController.INIT_TIMES):
+            try:
+                symbol_info = self.robot.get_symbol_info(self.option.symbol)
+                if symbol_info is None:
+                    logging.info("[Init]Symbol is not supported: {}".format(self.option.symbol))
+                    return False
 
-        # check profit
-        profit = self.option.profit
-        if profit < 0:
-            logging.error("[Check]Invalid profit: {}.".format(self.option.profit))
-            return False
+                self._data.symbol = symbol_info['symbol']
 
-        # check price factor
-        price_adjust = self.option.price_adjust
-        if price_adjust < 0:
-            logging.error("[Check]Invalid price_adjust: {}.".format(self.option.price_adjust))
-            return False
+                symbol_info['filters'] = {item['filterType']: item for item in symbol_info['filters']}
+                self._data.min_qty = float(symbol_info['filters']['LOT_SIZE']['minQty'])
+                self._data.min_price = float(symbol_info['filters']['PRICE_FILTER']['minPrice'])
+                self._data.min_notional = float(symbol_info['filters']['MIN_NOTIONAL']['minNotional'])
+                self._data.step_size = float(symbol_info['filters']['LOT_SIZE']['stepSize'])
+                self._data.tick_size = float(symbol_info['filters']['PRICE_FILTER']['tickSize'])
 
-        # check robot count
-        robot_count = self.option.robot_count
-        if robot_count < 1:
-            logging.error("[Check]Invalid robot_count: {}.".format(self.option.robot_count))
-            return False
+                quantity = self.option.quantity
+                quantity = self._data.min_qty if quantity < self._data.min_qty else quantity
+                quantity = float(self._data.step_size * math.floor(quantity / self._data.step_size))
+                self._data.quantity = quantity
 
-        # check transaction count
-        transaction_count = self.option.transaction_count
-        if transaction_count < 0:
-            logging.error("[Check]Invalid transaction_count is: {}.".format(self.option.transaction_count))
-        elif transaction_count == 0:
-            logging.warning("[Check]Current transaction_count is: {}, and will be overwrite to {}.".format(
-                self.option.transaction_count, sys.maxsize))
+                self._data.fee = self.option.fee
+                self._data.profit = self.option.profit
+                self._data.price_adjust = self.option.price_adjust
+                self._data.strategy = self.option.strategy
 
-        return self.robot.validate_args(self.option)
+                return True
+            except Exception as e:
+                logging.error("[Init Exception {}]={}".format(i, e))
+                time.sleep(XController.INIT_WAIT_TIME)
+        return False
 
     def _buy(self):
         order = None
-        if self.robot.can_buy(self.option, self._params):
+        if self.robot.can_buy(self._data, self._data.strategy):
             buy_count = 0
             while buy_count < XController.BUY_TIMES:
-                order = self.robot.buy(self._params.symbol, self._params.quantity, self._params.buy_price)
+                order = self.robot.buy(self._data.symbol, self._data.quantity, self._data.buy_price)
 
                 if order is not None:
                     break
@@ -96,11 +93,11 @@ class XController:
 
     def _sell(self):
         order = None
-        if self.robot.can_sell(self._params):
+        if self.robot.can_sell(self._data, self._data.strategy):
             sell_count = 0
 
             while sell_count < XController.SELL_TIMES:
-                order = self.robot.sell(self._params.symbol, self._params.quantity, self._params.sell_price)
+                order = self.robot.sell(self._data.symbol, self._data.quantity, self._data.sell_price)
 
                 if order is not None:
                     break
