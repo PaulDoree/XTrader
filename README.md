@@ -24,7 +24,7 @@
       -p, --profit              profit must be greater than or equal to 0.3
       -pa, --price_adjust       price_adjust must be greater than or equal to 1
       -tc, --transaction_count  transaction count must be greater than or equal to 1
-      -rc, --robot_count robot  count must be greater than or equal to 1
+      -rc, --robot_count        root count must be greater than or equal to 1
       --strategy                transaction strategy, and format is module_name.strategy_class_name
 	```
 
@@ -100,9 +100,9 @@
 ### Donation
 If you think XTrader is interesting, and give you help on trading, please donate and support the project.
 
-* BTC address: `1PbDaZ5bZRMXVAyTSGajENGCijnMsoWe2C`
-* ETH address: `0x0c796a94c1846b72a42ad96c24f5d5f03a51691f`
-* LTC address: `LWNdxDoJzT1ECxA4etjNzxig8kqrNJh7r8`
+* BTC address: `1LaW6zi9tURj1daAQPvJ6a3WSZUESs6fuT`
+* ETH address: `0x50544ad5b5e64819c7cb01e4645802706ef7156d`
+* LTC address: `LXmTtZHvACvhK7RLHNC2u38WTQoRDbw74v`
 
 
 ### License
