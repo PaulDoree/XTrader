@@ -93,7 +93,7 @@ class XController:
 
     def _sell(self):
         order = None
-        if self.robot.can_sell(self._data):
+        if self.robot.can_sell(self._data, self._data.strategy):
             sell_count = 0
 
             while sell_count < XController.SELL_TIMES:
