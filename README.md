@@ -15,6 +15,7 @@
     python xtrader.py --help
     usage: xtrader.py [-h] [-s SYMBOL] [-q QUANTITY] [-f FEE] [-p PROFIT]
                       [-pa PRICE_ADJUST] [-tc TRANSACTION_COUNT] [-rc ROBOT_COUNT]
+                      [--strategy STRATEGY]
 
     optional arguments:
       -h, --help                show this help message and exit
