@@ -77,7 +77,7 @@
 
 ### Roadmap
 * [x] Binance exchange platform basic support.
-* [ ] Customize transaction strategy.
+* [x] Customize transaction strategy.
 * [ ] Transaction persistence.
 * [ ] Other exchange platform.
 * [ ] ...
