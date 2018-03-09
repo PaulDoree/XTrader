@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import math
+import sys
 import threading
 import time
 
@@ -11,7 +12,7 @@ class XController:
     BUY_WAIT_TIME = 0.5
     SELL_WAIT_TIME = 1
 
-    INIT_TIMES = 1024
+    INIT_TIMES = sys.maxsize
     BUY_TIMES = 3
     SELL_TIMES = 3
 
