@@ -11,10 +11,11 @@
 ### Usage
 * Command line help info.
 
-	```
+	```bash
     python xtrader.py --help
     usage: xtrader.py [-h] [-s SYMBOL] [-q QUANTITY] [-f FEE] [-p PROFIT]
                       [-pa PRICE_ADJUST] [-tc TRANSACTION_COUNT] [-rc ROBOT_COUNT]
+                      [--strategy STRATEGY]
 
     optional arguments:
       -h, --help                show this help message and exit
@@ -24,14 +25,15 @@
       -p, --profit              profit must be greater than or equal to 0.3
       -pa, --price_adjust       price_adjust must be greater than or equal to 1
       -tc, --transaction_count  transaction count must be greater than or equal to 1
-      -rc, --robot_count robot  count must be greater than or equal to 1
+      -rc, --robot_count        root count must be greater than or equal to 1
+      --strategy                transaction strategy, and format is module_name.strategy_class_name
 	```
 
 	> Why the default symbol is `CNBBTC`? Because `CNBBTC` is the symbol in the creation transaction of XTrader.
 
 * Install requirements.
 
-    ```
+    ```bash
     cd ${xtrader}
 
     sudo pip install -r requirements.txt
@@ -41,7 +43,7 @@
 * Modify `API_KEY` and `API_SECRET` in `${xtrader}/conf/config.py`.
 * Start XTrader.
 
-	```
+	```bash
 	cd ${xtrader}
 	python xtrader.py --symbol CNDBTC --quantity 130
 	2018-03-03 20:56:05,843 - XRobot0(CNDBTC) - INFO - [Start]Transaction1 is started.
@@ -76,7 +78,7 @@
 
 ### Roadmap
 * [x] Binance exchange platform basic support.
-* [ ] Customize transaction strategy.
+* [x] Customize transaction strategy.
 * [ ] Transaction persistence.
 * [ ] Other exchange platform.
 * [ ] ...
@@ -99,9 +101,9 @@
 ### Donation
 If you think XTrader is interesting, and give you help on trading, please donate and support the project.
 
-* BTC address: `1PbDaZ5bZRMXVAyTSGajENGCijnMsoWe2C`
-* ETH address: `0x0c796a94c1846b72a42ad96c24f5d5f03a51691f`
-* LTC address: `LWNdxDoJzT1ECxA4etjNzxig8kqrNJh7r8`
+* BTC address: `1LaW6zi9tURj1daAQPvJ6a3WSZUESs6fuT`
+* ETH address: `0x50544ad5b5e64819c7cb01e4645802706ef7156d`
+* LTC address: `LXmTtZHvACvhK7RLHNC2u38WTQoRDbw74v`
 
 
 ### License

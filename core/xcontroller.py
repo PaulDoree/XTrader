@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import math
+import sys
 import threading
 import time
 
@@ -11,14 +12,14 @@ class XController:
     BUY_WAIT_TIME = 0.5
     SELL_WAIT_TIME = 1
 
-    INIT_TIMES = 1024
+    INIT_TIMES = sys.maxsize
     BUY_TIMES = 3
     SELL_TIMES = 3
 
     def __init__(self, robot, option):
+        self._data = threading.local()
         self.robot = robot
         self.option = option
-        self._data = threading.local()
 
     def fire(self):
         for i in range(self.option.robot_count):
@@ -69,6 +70,7 @@ class XController:
                 self._data.fee = self.option.fee
                 self._data.profit = self.option.profit
                 self._data.price_adjust = self.option.price_adjust
+                self._data.strategy = self.option.strategy
 
                 return True
             except Exception as e:
@@ -78,7 +80,7 @@ class XController:
 
     def _buy(self):
         order = None
-        if self.robot.can_buy(self._data):
+        if self.robot.can_buy(self._data, self._data.strategy):
             buy_count = 0
             while buy_count < XController.BUY_TIMES:
                 order = self.robot.buy(self._data.symbol, self._data.quantity, self._data.buy_price)
@@ -91,7 +93,7 @@ class XController:
 
     def _sell(self):
         order = None
-        if self.robot.can_sell(self._data):
+        if self.robot.can_sell(self._data, self._data.strategy):
             sell_count = 0
 
             while sell_count < XController.SELL_TIMES:

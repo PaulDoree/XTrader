@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import importlib
 from argparse import ArgumentTypeError
 
 
@@ -27,7 +28,8 @@ def fee_float(value):
 def price_adjust_int(value):
     price_adjust = int(value)
     if price_adjust < 1:
-        raise ArgumentTypeError("invalid price_adjust: {}, and price_adjust must be greater than or equal to 1!".format(price_adjust))
+        raise ArgumentTypeError(
+            "invalid price_adjust: {}, and price_adjust must be greater than or equal to 1!".format(price_adjust))
     return price_adjust
 
 
@@ -36,3 +38,22 @@ def count_int(value):
     if count < 1:
         raise ArgumentTypeError("invalid count: {}, and count must be greater than or equal to 1!".format(count))
     return count
+
+
+def strategy(value):
+    values = value.split('.')
+    if len(values) < 2:
+        raise ArgumentTypeError("invalid strategy: {}, and strategy's format is module_name.class_name!".format(value))
+
+    strategy_module_name, strategy_class_name = ".".join(values[:-1]), values[-1]
+
+    try:
+        strategy_module = importlib.import_module("strategy.{}".format(strategy_module_name))
+    except Exception as e:
+        raise ArgumentTypeError("invalid strategy: {}".format(e))
+
+    if hasattr(strategy_module, strategy_class_name) is False:
+        raise ArgumentTypeError("invalid strategy: No class named {}".format(value))
+
+    strategy_class = getattr(strategy_module, strategy_class_name)
+    return strategy_class()
