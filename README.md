@@ -25,6 +25,7 @@
       -pa, --price_adjust       price_adjust must be greater than or equal to 1
       -tc, --transaction_count  transaction count must be greater than or equal to 1
       -rc, --robot_count robot  count must be greater than or equal to 1
+      --strategy                transaction strategy, and format is module_name.strategy_class_name
 	```
 
 	> Why the default symbol is `CNBBTC`? Because `CNBBTC` is the symbol in the creation transaction of XTrader.
