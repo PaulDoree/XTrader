@@ -11,7 +11,7 @@
 ### Usage
 * Command line help info.
 
-	```
+	```bash
     python xtrader.py --help
     usage: xtrader.py [-h] [-s SYMBOL] [-q QUANTITY] [-f FEE] [-p PROFIT]
                       [-pa PRICE_ADJUST] [-tc TRANSACTION_COUNT] [-rc ROBOT_COUNT]
@@ -33,7 +33,7 @@
 
 * Install requirements.
 
-    ```
+    ```bash
     cd ${xtrader}
 
     sudo pip install -r requirements.txt
@@ -43,7 +43,7 @@
 * Modify `API_KEY` and `API_SECRET` in `${xtrader}/conf/config.py`.
 * Start XTrader.
 
-	```
+	```bash
 	cd ${xtrader}
 	python xtrader.py --symbol CNDBTC --quantity 130
 	2018-03-03 20:56:05,843 - XRobot0(CNDBTC) - INFO - [Start]Transaction1 is started.
